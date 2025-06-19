@@ -1,6 +1,5 @@
 from flask import Flask, request, redirect, render_template_string
 import string, random, sqlite3
-import os  # 👈 Added to read PORT from environment
 
 app = Flask(__name__)
 
@@ -25,8 +24,7 @@ def home():
         c.execute("INSERT INTO urls (short, original) VALUES (?, ?)", (short_code, original_url))
         conn.commit()
 
-        # Use your actual domain in production
-        short_url = f"{request.host_url}{short_code}"
+        short_url = f"http://localhost:5000/{short_code}"
         return render_template_string(TEMPLATE, short_url=short_url)
 
     return render_template_string(TEMPLATE)
@@ -111,7 +109,5 @@ TEMPLATE = '''
 </html>
 '''
 
-# ✅ This part ensures your app works on Render or any other platform
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))  # Default to 5000 for local
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(debug=True)
